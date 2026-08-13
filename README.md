@@ -42,7 +42,7 @@ ve a **Authentication → Providers → Email** y desactiva "Confirm email".
 
 ## 3. Volverte el propietario (dueño único de la tienda)
 
-Hay tres niveles de acceso:
+Hay tres niveles de acceso :
 
 | Rol | Puede |
 |---|---|
