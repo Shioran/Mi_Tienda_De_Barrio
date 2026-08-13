@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -66,8 +67,12 @@ export default function LoginPage() {
             </Button>
           </form>
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            ¿No tienes cuenta? Pídele al administrador que te registre desde
-            Supabase Auth (los nuevos usuarios entran como cajero por defecto).
+            ¿Primera vez aquí?{" "}
+            <Link href="/registro" className="font-medium text-primary underline">
+              Regístrate
+            </Link>{" "}
+            — entrarás con acceso de cajero; el administrador puede darte
+            permisos completos luego desde Usuarios.
           </p>
         </CardContent>
       </Card>

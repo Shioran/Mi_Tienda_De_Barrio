@@ -12,9 +12,10 @@ import {
   ClipboardList,
   LogOut,
   Store,
+  Users,
 } from "lucide-react";
 
-const ENLACES_ADMIN = [
+const ENLACES_GESTION = [
   { href: "/", label: "Inicio", icon: LayoutDashboard },
   { href: "/productos/nuevo", label: "Catálogo maestro", icon: Store },
   { href: "/inventario/agregar", label: "Reabastecimiento", icon: PackagePlus },
@@ -23,12 +24,31 @@ const ENLACES_ADMIN = [
   { href: "/reportes", label: "Cierre del día", icon: ClipboardList },
 ];
 
+const ENLACE_USUARIOS = { href: "/usuarios", label: "Usuarios", icon: Users };
+
 const ENLACES_CAJERO = [{ href: "/pos", label: "Registrar venta", icon: ShoppingCart }];
 
-export function Sidebar({ rol, nombre }: { rol: "admin" | "cajero"; nombre: string }) {
+const ETIQUETA_ROL: Record<string, string> = {
+  propietario: "Propietario",
+  admin: "Administrador",
+  cajero: "Cajero",
+};
+
+export function Sidebar({
+  rol,
+  nombre,
+}: {
+  rol: "propietario" | "admin" | "cajero";
+  nombre: string;
+}) {
   const pathname = usePathname();
   const router = useRouter();
-  const enlaces = rol === "admin" ? ENLACES_ADMIN : ENLACES_CAJERO;
+  const enlaces =
+    rol === "cajero"
+      ? ENLACES_CAJERO
+      : rol === "propietario"
+      ? [...ENLACES_GESTION, ENLACE_USUARIOS]
+      : ENLACES_GESTION;
 
   async function cerrarSesion() {
     const supabase = createClient();
@@ -73,7 +93,7 @@ export function Sidebar({ rol, nombre }: { rol: "admin" | "cajero"; nombre: stri
       <div className="border-t border-white/10 px-3 py-4">
         <div className="mb-2 px-3">
           <p className="text-sm font-medium">{nombre}</p>
-          <p className="text-xs capitalize text-primary-foreground/60">{rol}</p>
+          <p className="text-xs text-primary-foreground/60">{ETIQUETA_ROL[rol] ?? rol}</p>
         </div>
         <button
           onClick={cerrarSesion}

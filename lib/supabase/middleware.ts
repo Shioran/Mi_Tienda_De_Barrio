@@ -30,7 +30,11 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const esRutaPublica = path.startsWith("/login") || path.startsWith("/_next") || path.startsWith("/api");
+  const esRutaPublica =
+    path.startsWith("/login") ||
+    path.startsWith("/registro") ||
+    path.startsWith("/_next") ||
+    path.startsWith("/api");
 
   if (!user && !esRutaPublica) {
     const url = request.nextUrl.clone();
@@ -45,16 +49,25 @@ export async function updateSession(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    const esCajero = perfil?.rol === "cajero";
-    const rutasSoloAdmin = ["/productos", "/inventario", "/reportes"];
+    const rol = perfil?.rol;
+    const esCajero = rol === "cajero";
+    const esPropietario = rol === "propietario";
+    const rutasSoloGestion = ["/productos", "/inventario", "/reportes"];
+    const rutasSoloPropietario = ["/usuarios"];
 
-    if (esCajero && rutasSoloAdmin.some((r) => path.startsWith(r))) {
+    if (esCajero && rutasSoloGestion.some((r) => path.startsWith(r))) {
       const url = request.nextUrl.clone();
       url.pathname = "/pos";
       return NextResponse.redirect(url);
     }
 
-    if (path.startsWith("/login")) {
+    if (!esPropietario && rutasSoloPropietario.some((r) => path.startsWith(r))) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      return NextResponse.redirect(url);
+    }
+
+    if (path.startsWith("/login") || path.startsWith("/registro")) {
       const url = request.nextUrl.clone();
       url.pathname = "/";
       return NextResponse.redirect(url);

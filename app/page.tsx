@@ -3,13 +3,14 @@ import { LayoutAutenticado } from "@/components/layout-autenticado";
 import { getPerfilActual, createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCOP } from "@/lib/utils";
-import { ShoppingCart, Boxes, ClipboardList, Store, ArrowRight, AlertTriangle } from "lucide-react";
+import { ShoppingCart, Boxes, ClipboardList, Store, ArrowRight, AlertTriangle, Users } from "lucide-react";
 
 const ACCESOS = [
-  { href: "/pos", label: "Registrar venta", desc: "Abrir la caja y vender", icon: ShoppingCart, soloAdmin: false },
-  { href: "/inventario", label: "Inventario", desc: "Ver stock y vencimientos", icon: Boxes, soloAdmin: true },
-  { href: "/reportes", label: "Cierre del día", desc: "Ventas de hoy y utilidad", icon: ClipboardList, soloAdmin: true },
-  { href: "/productos/nuevo", label: "Catálogo maestro", desc: "Crear un nuevo producto", icon: Store, soloAdmin: true },
+  { href: "/pos", label: "Registrar venta", desc: "Abrir la caja y vender", icon: ShoppingCart, soloGestion: false, soloPropietario: false },
+  { href: "/inventario", label: "Inventario", desc: "Ver stock y vencimientos", icon: Boxes, soloGestion: true, soloPropietario: false },
+  { href: "/reportes", label: "Cierre del día", desc: "Ventas de hoy y utilidad", icon: ClipboardList, soloGestion: true, soloPropietario: false },
+  { href: "/productos/nuevo", label: "Catálogo maestro", desc: "Crear un nuevo producto", icon: Store, soloGestion: true, soloPropietario: false },
+  { href: "/usuarios", label: "Usuarios", desc: "Ascender admins o eliminar cuentas", icon: Users, soloGestion: true, soloPropietario: true },
 ];
 
 export default async function DashboardPage() {
@@ -21,7 +22,10 @@ export default async function DashboardPage() {
   let ventasHoy = 0;
   let totalHoy = 0;
 
-  if (perfil?.rol === "admin") {
+  const puedeGestionar = perfil?.rol === "admin" || perfil?.rol === "propietario";
+  const esPropietario = perfil?.rol === "propietario";
+
+  if (puedeGestionar) {
     const { count: cp } = await supabase.from("productos").select("*", { count: "exact", head: true });
     totalProductos = cp ?? 0;
 
@@ -50,7 +54,9 @@ export default async function DashboardPage() {
     totalHoy = (ventas ?? []).reduce((acc, v) => acc + Number(v.total_venta), 0);
   }
 
-  const accesos = ACCESOS.filter((a) => !a.soloAdmin || perfil?.rol === "admin");
+  const accesos = ACCESOS.filter(
+    (a) => (!a.soloGestion || puedeGestionar) && (!a.soloPropietario || esPropietario)
+  );
 
   return (
     <LayoutAutenticado>
@@ -59,13 +65,13 @@ export default async function DashboardPage() {
           Hola, {perfil?.nombre?.split(" ")[0] ?? "de nuevo"} 👋
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {perfil?.rol === "admin"
+          {puedeGestionar
             ? "Este es el resumen de tu tienda hoy."
             : "Lista para registrar ventas en caja."}
         </p>
       </div>
 
-      {perfil?.rol === "admin" && (
+      {puedeGestionar && (
         <div className="mb-8 grid grid-cols-3 gap-4">
           <Card>
             <CardContent className="pt-5">

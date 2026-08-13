@@ -22,28 +22,52 @@ Vercel.
 
 ## 2. Ejecutar el esquema SQL
 
-1. En el dashboard de Supabase, abre **SQL Editor → New query**.
-2. Pega **todo** el contenido de `supabase/migrations/0001_init.sql` y dale **Run**.
-   Esto crea las tablas, los roles (`admin` / `cajero`), la seguridad por
-   fila (RLS) y la función `fn_registrar_venta` que aplica la lógica FEFO.
-3. Abre otra **New query**, pega el contenido de `supabase/seed.sql` y dale
-   **Run**. Esto carga el catálogo de ejemplo (48 productos en 5 categorías,
+Abre **SQL Editor → New query** en Supabase y ejecuta los archivos de
+`supabase/migrations/` **en orden, uno por uno** (dale "Run" a cada uno
+antes de pegar el siguiente):
+
+1. `0001_init.sql` — tablas, roles base, RLS y la función `fn_registrar_venta` (FEFO).
+2. `0002_gestion_usuarios.sql` — funciones para listar usuarios y cambiar roles.
+3. `0003_rol_propietario.sql` — agrega el rol `propietario` al enum de roles.
+   **Este archivo debe ejecutarse solo, en su propia consulta**, porque
+   Postgres exige confirmar un valor nuevo de enum antes de poder usarlo.
+4. `0004_permisos_propietario.sql` — deja la gestión de usuarios (ascender
+   admins, eliminar cuentas) exclusivamente en manos del propietario.
+5. `seed.sql` — carga el catálogo de ejemplo (48 productos, 5 categorías,
    tomados de `catalogo_productos_base.csv`) con su primer lote de inventario.
 
-## 3. Crear tus usuarios (dueño y cajero)
+Por defecto Supabase pide confirmar el correo antes de poder iniciar sesión.
+Si quieres que la gente pueda entrar apenas se registra (sin revisar correo),
+ve a **Authentication → Providers → Email** y desactiva "Confirm email".
 
-Cada usuario nuevo entra automáticamente con rol **cajero**. Para tener un
-administrador:
+## 3. Volverte el propietario (dueño único de la tienda)
 
-1. En Supabase: **Authentication → Users → Add user** (correo + contraseña,
-   marca "Auto Confirm User"). Repite para cada cajero que necesites.
-2. Para volver administrador a un usuario, ve a **SQL Editor** y ejecuta:
+Hay tres niveles de acceso:
+
+| Rol | Puede |
+|---|---|
+| **Cajero** | Solo Registrar venta |
+| **Administrador** | Todo lo operativo: catálogo, inventario, reportes, precios |
+| **Propietario** | Todo lo de administrador, **más** ascender/degradar admins y eliminar usuarios |
+
+Toda cuenta creada desde `/registro` entra como **cajero**. El rol
+`propietario` **no se puede asignar desde la app** — a propósito, para que
+nadie pueda auto-otorgárselo. Solo tú lo activas una vez, por SQL:
+
+1. Entra a la app y créate una cuenta normal desde `/registro`.
+2. En **SQL Editor**, vuélvete propietario ejecutando:
    ```sql
-   update public.perfiles set rol = 'admin' where id =
+   update public.perfiles set rol = 'propietario' where id =
      (select id from auth.users where email = 'tu_correo@ejemplo.com');
    ```
-   El administrador ve todo el sistema (catálogo, inventario, reportes,
-   analítica y modifica precios). El cajero solo ve **Registrar venta**.
+3. Desde ahí en adelante, **ya no necesitas volver a SQL**: entra a la
+   pantalla **Usuarios** (solo visible para ti, el propietario) y usa los
+   botones "Hacer admin" / "Quitar admin" o el ícono de basura para
+   eliminar cuentas. Un administrador normal **no ve ni puede acceder** a
+   esta pantalla — ni por la interfaz ni llamando la función directamente
+   (la función SQL valida el rol del que llama, sin importar cómo se
+   invoque). Tampoco puedes eliminarte a ti mismo ni cambiarte el rol por
+   accidente.
 
 ## 4. Configurar el proyecto localmente
 
@@ -99,6 +123,7 @@ sola transacción**:
 ```
 app/
   login/page.tsx              Auth (Supabase Auth)
+  registro/page.tsx           Autoregistro de nuevos usuarios (rol cajero por defecto)
   page.tsx                    Dashboard principal
   productos/nuevo/page.tsx    Catálogo maestro (crear producto + 1er lote)
   inventario/
@@ -106,13 +131,18 @@ app/
     agregar/page.tsx          Reabastecimiento (nuevo lote)
   pos/page.tsx                Punto de venta local
   reportes/page.tsx           Cierre del día
+  usuarios/page.tsx           Gestión de roles (solo admin)
 components/                   UI (estilo shadcn) + vistas cliente
 lib/
   supabase/                   Clientes de Supabase (browser/server/middleware)
-  actions/                    Server actions (catálogo, inventario, ventas)
+  actions/                    Server actions (catálogo, inventario, ventas, usuarios)
   store/cart.ts                Zustand: carrito temporal de la caja
 supabase/
-  migrations/0001_init.sql    Esquema completo + RLS + función FEFO
+  migrations/
+    0001_init.sql               Esquema completo + RLS + función FEFO
+    0002_gestion_usuarios.sql   Funciones para listar usuarios y cambiar roles
+    0003_rol_propietario.sql    Agrega el rol "propietario" al enum
+    0004_permisos_propietario.sql  Gestión de usuarios exclusiva del propietario
   seed.sql                    Datos de prueba (del CSV de catálogo)
 ```
 
@@ -120,8 +150,8 @@ supabase/
 
 - Solo escritorio/PC, sin lector de código de barras (búsqueda manual).
 - Sin pasarelas de pago ni fiados/crédito.
-- Roles: **admin** (todo el sistema, incluye editar precios) y **cajero**
-  (solo Registrar venta).
+- Roles: **propietario** (tú — único que gestiona usuarios), **admin**
+  (todo lo operativo, incluye editar precios) y **cajero** (solo Registrar venta).
 - Separación estricta entre Catálogo Maestro (`productos`) y Entradas de
   Inventario (`lotes`).
 
