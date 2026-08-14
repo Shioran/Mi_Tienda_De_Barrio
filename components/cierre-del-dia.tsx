@@ -20,8 +20,8 @@ export function CierreDelDia({
 
   return (
     <div className="flex flex-col gap-6">
-      <Card className="overflow-hidden">
-        <table className="w-full text-sm">
+      <Card className="overflow-x-auto">
+        <table className="w-full min-w-[520px] text-sm">
           <thead className="bg-muted text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-4 py-3 font-medium">N° venta</th>
@@ -50,22 +50,29 @@ export function CierreDelDia({
         </table>
       </Card>
 
-      <Card className="flex items-center justify-between p-5">
-        <div className="flex gap-8">
+      <Card className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="grid grid-cols-3 gap-4 sm:flex sm:gap-8">
           <div>
-            <p className="text-sm text-muted-foreground">Total vendido hoy</p>
-            <p className="font-display text-xl font-semibold">{formatCOP(totalDia)}</p>
+            <p className="text-xs text-muted-foreground sm:text-sm">Total vendido hoy</p>
+            <p className="font-display text-base font-semibold sm:text-xl">{formatCOP(totalDia)}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Utilidad del día</p>
-            <p className="font-display text-xl font-semibold text-success">{formatCOP(utilidadDia)}</p>
+            <p className="text-xs text-muted-foreground sm:text-sm">Utilidad del día</p>
+            <p className="font-display text-base font-semibold text-success sm:text-xl">
+              {formatCOP(utilidadDia)}
+            </p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">N° de ventas</p>
-            <p className="font-display text-xl font-semibold">{ventas.length}</p>
+            <p className="text-xs text-muted-foreground sm:text-sm">N° de ventas</p>
+            <p className="font-display text-base font-semibold sm:text-xl">{ventas.length}</p>
           </div>
         </div>
-        <Button size="lg" onClick={() => setCorteHecho(true)} disabled={corteHecho || ventas.length === 0}>
+        <Button
+          size="lg"
+          onClick={() => setCorteHecho(true)}
+          disabled={corteHecho || ventas.length === 0}
+          className="w-full sm:w-auto"
+        >
           <ClipboardCheck size={18} />
           {corteHecho ? "Corte realizado" : "Hacer corte"}
         </Button>

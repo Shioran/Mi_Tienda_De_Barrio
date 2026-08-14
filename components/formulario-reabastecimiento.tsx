@@ -106,12 +106,12 @@ export function FormularioReabastecimiento({ categoriasIniciales }: { categorias
   }
 
   return (
-    <form onSubmit={enviarFormulario} className="grid grid-cols-2 gap-6">
-      <Card className="col-span-2">
+    <form onSubmit={enviarFormulario} className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <Card className="col-span-1 md:col-span-2">
         <CardHeader>
           <CardTitle>Ubicar producto</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-3 gap-4">
+        <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Select label="Categoría" value={categoriaId} onChange={(e) => seleccionarCategoria(e.target.value)}>
             <option value="">Selecciona…</option>
             {categorias.map((c) => (
@@ -150,11 +150,11 @@ export function FormularioReabastecimiento({ categoriasIniciales }: { categorias
         </CardContent>
       </Card>
 
-      <Card className="col-span-2">
+      <Card className="col-span-1 md:col-span-2">
         <CardHeader>
           <CardTitle>Datos del lote</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-3 gap-4">
+        <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Input label="N° de lote" value={numeroLote} onChange={(e) => setNumeroLote(e.target.value)} required />
           <Input
             label="Unidades"
@@ -181,10 +181,10 @@ export function FormularioReabastecimiento({ categoriasIniciales }: { categorias
         </CardContent>
       </Card>
 
-      {error && <p className="col-span-2 text-sm text-danger">{error}</p>}
-      {ok && <p className="col-span-2 text-sm text-success">Lote agregado al inventario correctamente.</p>}
+      {error && <p className="col-span-1 text-sm text-danger md:col-span-2">{error}</p>}
+      {ok && <p className="col-span-1 text-sm text-success md:col-span-2">Lote agregado al inventario correctamente.</p>}
 
-      <div className="col-span-2 flex justify-end">
+      <div className="col-span-1 flex justify-end md:col-span-2">
         <Button type="submit" size="lg" disabled={enviando}>
           {enviando ? "Agregando…" : "Agregar al inventario"}
         </Button>

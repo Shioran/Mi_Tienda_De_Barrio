@@ -10,7 +10,7 @@ export default async function ReportesPage() {
   return (
     <LayoutAutenticado>
       <div className="mb-6">
-        <h1 className="font-display text-2xl font-semibold text-foreground">Cierre del día</h1>
+        <h1 className="font-display text-xl font-semibold text-foreground sm:text-2xl">Cierre del día</h1>
         <p className="mt-1 text-sm text-muted-foreground">Historial de ventas de hoy y corte de caja.</p>
       </div>
       <CierreDelDia ventas={ventas} totalDia={totalDia} utilidadDia={utilidadDia} />

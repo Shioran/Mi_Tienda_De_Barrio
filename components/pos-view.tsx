@@ -73,8 +73,8 @@ export function PosView() {
   }
 
   return (
-    <div className="grid grid-cols-5 gap-6">
-      <div className="col-span-3 flex flex-col gap-4">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
+      <div className="flex flex-col gap-4 md:col-span-3">
         <Card>
           <CardHeader>
             <CardTitle>Busca el producto</CardTitle>
@@ -118,8 +118,8 @@ export function PosView() {
             )}
 
             {productoElegido && (
-              <div className="flex items-end gap-3 rounded-md bg-muted p-3">
-                <div className="flex-1">
+              <div className="flex flex-wrap items-end gap-3 rounded-md bg-muted p-3">
+                <div className="min-w-[160px] flex-1">
                   <p className="text-sm font-medium">{productoElegido.nombre}</p>
                   <p className="text-xs text-muted-foreground">
                     {formatCOP(productoElegido.precioVentaUni)} · stock {productoElegido.stockDisponible}
@@ -143,7 +143,7 @@ export function PosView() {
         </Card>
       </div>
 
-      <div className="col-span-2 flex flex-col gap-4">
+      <div className="flex flex-col gap-4 md:col-span-2">
         <Card className="flex-1">
           <CardHeader className="flex-row items-center justify-between space-y-0">
             <CardTitle className="flex items-center gap-2">
@@ -166,8 +166,8 @@ export function PosView() {
               <div className="flex flex-col gap-3">
                 {items.map((item) => (
                   <div key={item.productoId} className="flex items-center gap-2 border-b border-border pb-3">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{item.nombre}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">{item.nombre}</p>
                       <p className="text-xs text-muted-foreground">{formatCOP(item.precioUnitario)} c/u</p>
                     </div>
                     <input
@@ -176,15 +176,15 @@ export function PosView() {
                       max={item.stockDisponible}
                       value={item.cantidad}
                       onChange={(e) => cambiarCantidad(item.productoId, parseInt(e.target.value, 10) || 1)}
-                      className="h-8 w-16 rounded-md border border-border text-center text-sm"
+                      className="h-8 w-14 shrink-0 rounded-md border border-border text-center text-sm sm:w-16"
                     />
-                    <p className="w-24 text-right text-sm font-medium">
+                    <p className="w-16 shrink-0 text-right text-sm font-medium sm:w-24">
                       {formatCOP(item.precioUnitario * item.cantidad)}
                     </p>
                     <button
                       type="button"
                       onClick={() => quitarItem(item.productoId)}
-                      className="text-muted-foreground hover:text-danger"
+                      className="shrink-0 text-muted-foreground hover:text-danger"
                     >
                       <Trash2 size={16} />
                     </button>

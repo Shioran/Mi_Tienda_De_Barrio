@@ -142,12 +142,12 @@ export function FormularioNuevoProducto({
   }
 
   return (
-    <form onSubmit={enviarFormulario} className="grid grid-cols-2 gap-6">
-      <Card className="col-span-2">
+    <form onSubmit={enviarFormulario} className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <Card className="col-span-1 md:col-span-2">
         <CardHeader>
           <CardTitle>Categoría</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-2 gap-6">
+        <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <Select
               label="Categoría"
@@ -224,16 +224,16 @@ export function FormularioNuevoProducto({
         </CardContent>
       </Card>
 
-      <Card className="col-span-2">
+      <Card className="col-span-1 md:col-span-2">
         <CardHeader>
           <CardTitle>Datos del producto</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-2 gap-4">
+        <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Input label="Tipo (ej: Leche, Detergente)" value={tipo} onChange={(e) => setTipo(e.target.value)} required />
           <Input label="Marca" value={marca} onChange={(e) => setMarca(e.target.value)} required />
           <Input
             label="Nombre del producto (opcional, se arma con tipo + marca)"
-            className="col-span-2"
+            className="col-span-1 sm:col-span-2"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
             placeholder={`${tipo} ${marca}`.trim()}
@@ -304,14 +304,14 @@ export function FormularioNuevoProducto({
         </CardContent>
       </Card>
 
-      <Card className="col-span-2">
+      <Card className="col-span-1 md:col-span-2">
         <CardHeader>
           <CardTitle>Primer lote de inventario</CardTitle>
           <p className="text-sm text-muted-foreground">
             Todo producto nuevo entra con su primer lote de existencias.
           </p>
         </CardHeader>
-        <CardContent className="grid grid-cols-3 gap-4">
+        <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Input label="N° de lote" value={numeroLote} onChange={(e) => setNumeroLote(e.target.value)} required />
           <Input
             label="Unidades iniciales"
@@ -332,9 +332,9 @@ export function FormularioNuevoProducto({
         </CardContent>
       </Card>
 
-      {error && <p className="col-span-2 text-sm text-danger">{error}</p>}
+      {error && <p className="col-span-1 text-sm text-danger md:col-span-2">{error}</p>}
 
-      <div className="col-span-2 flex justify-end">
+      <div className="col-span-1 flex justify-end md:col-span-2">
         <Button type="submit" size="lg" disabled={enviando}>
           {enviando ? "Creando…" : "Crear producto"}
         </Button>

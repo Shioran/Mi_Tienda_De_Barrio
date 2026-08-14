@@ -8,7 +8,7 @@ export default async function AgregarInventarioPage() {
   return (
     <LayoutAutenticado>
       <div className="mb-6">
-        <h1 className="font-display text-2xl font-semibold text-foreground">Reabastecimiento</h1>
+        <h1 className="font-display text-xl font-semibold text-foreground sm:text-2xl">Reabastecimiento</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Ingresa un nuevo lote para un producto que ya existe en el catálogo.
         </p>

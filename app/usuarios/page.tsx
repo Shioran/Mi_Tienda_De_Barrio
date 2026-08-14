@@ -10,7 +10,7 @@ export default async function UsuariosPage() {
   return (
     <LayoutAutenticado>
       <div className="mb-6">
-        <h1 className="font-display text-2xl font-semibold text-foreground">Usuarios</h1>
+        <h1 className="font-display text-xl font-semibold text-foreground sm:text-2xl">Usuarios</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Administra quién tiene acceso completo (admin) y quién solo puede
           registrar ventas (cajero).

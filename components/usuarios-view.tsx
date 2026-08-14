@@ -51,8 +51,8 @@ export function UsuariosView({ usuarios, miId }: { usuarios: Usuario[]; miId: st
         o eliminar usuarios. Esta pantalla solo es visible para el propietario.
       </p>
       {error && <p className="text-sm text-danger">{error}</p>}
-      <Card className="overflow-hidden">
-        <table className="w-full text-sm">
+      <Card className="overflow-x-auto">
+        <table className="w-full min-w-[560px] text-sm">
           <thead className="bg-muted text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-4 py-3 font-medium">Nombre</th>
