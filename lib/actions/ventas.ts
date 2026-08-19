@@ -6,7 +6,9 @@ import { revalidatePath } from "next/cache";
 export type FilaInventario = {
   productoId: string;
   nombre: string;
+  categoriaId: string;
   categoria: string;
+  subcategoriaId: string;
   subcategoria: string;
   stockDisponible: number;
   stockMinimo: number;
@@ -22,7 +24,9 @@ export async function obtenerInventario(): Promise<FilaInventario[]> {
 
   const { data: productos } = await supabase
     .from("productos")
-    .select("id, nombre, stock_minimo, stock_maximo, categorias(nombre), subcategorias(nombre)")
+    .select(
+      "id, nombre, stock_minimo, stock_maximo, categoria_id, subcategoria_id, categorias(nombre), subcategorias(nombre)"
+    )
     .order("nombre");
 
   const { data: lotes } = await supabase
@@ -55,7 +59,9 @@ export async function obtenerInventario(): Promise<FilaInventario[]> {
     return {
       productoId: p.id,
       nombre: p.nombre,
+      categoriaId: p.categoria_id,
       categoria: p.categorias?.nombre ?? "—",
+      subcategoriaId: p.subcategoria_id,
       subcategoria: p.subcategorias?.nombre ?? "—",
       stockDisponible: disponible,
       stockMinimo: p.stock_minimo,
